@@ -1,0 +1,10 @@
+node_modules
+dist
+coverage
+.wireit
+.dev-certs
+**/*/node_modules
+**/*/dist
+**/*/coverage
+**/*/.wireit
+**/*/.dev-certs

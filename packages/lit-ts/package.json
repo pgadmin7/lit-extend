@@ -1,0 +1,36 @@
+{
+  "name": "lit-ts",
+  "version": "0.0.1",
+  "private": true,
+  "description": "",
+  "type": "module",
+  "wireit": {
+    "dev": {
+      "command": "vite dev --force",
+      "service": true
+    },
+    "build": {
+      "command": "vite build --force",
+      "clean": true,
+      "files": [
+        "src/**/*.ts",
+        "tsconfig.json",
+        "vite-config.mts"
+      ],
+      "output": [
+        "dist",
+        ".tsbuildinfo"
+      ]
+    }
+  },
+  "dependencies": {
+    "lit": "^3.3.2",
+    "@vue/reactivity": "^3.5.26",
+    "ol": "^10.7.0"
+  },
+  "devDependencies": {
+    "typescript": "~5.9.3",
+    "vite": "^7.3.0"
+  },
+  "peerDependencies": {}
+}

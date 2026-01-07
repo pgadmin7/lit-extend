@@ -1,0 +1,251 @@
+// /* eslint-disable @typescript-eslint/no-explicit-any */
+// import BaseObject from "ol/Object";
+// import OlMap from "ol/Map.js";
+// import MapBrowserEvent from "ol/MapBrowserEvent.js";
+// import BaseEvent from "ol/events/Event.js";
+
+// import type { EventsKey } from "ol/events.js";
+
+// import type { CombinedOnSignature, EventTypes } from "ol/Observable";
+
+// import type { ObjectEvent, ObjectOnSignature } from "ol/Object";
+// import type { FeatureOnSignature } from "ol/Feature";
+// import type { CollectionOnSignature } from "ol/Collection";
+// import type { OverlayOnSignature } from "ol/Overlay";
+// import type { MapEventHandler, MapObjectEventTypes } from "ol/Map";
+
+// import type { GeolocationOnSignature } from "ol/Geolocation";
+// import type { ViewOnSignature } from "ol/View";
+
+// import type { BaseLayerOnSignature } from "ol/layer/Base";
+// import type { BaseTileLayerOnSignature } from "ol/layer/BaseTile";
+// import type { LayerOnSignature } from "ol/layer/Layer";
+// import type { GroupOnSignature } from "ol/layer/Group";
+// // TODO export missing waiting for ol version 1.7.1
+// // import type { HeatmapOnSignature } from "ol/layer/Heatmap.js";
+// import type { VectorTileLayerOnSignature } from "ol/layer/VectorTile";
+
+// import type { TileSourceOnSignature } from "ol/source/Tile";
+// import type { RasterSourceOnSignature } from "ol/source/Raster";
+// import type { ImageSourceOnSignature } from "ol/source/Image";
+// import type { VectorSourceOnSignature } from "ol/source/Vector";
+
+// import type { InteractionOnSignature } from "ol/interaction/Interaction";
+// import type { DragBoxOnSignature } from "ol/interaction/DragBox";
+// import type { SnapOnSignature } from "ol/interaction/Snap";
+// import type { DragAndDropOnSignature } from "ol/interaction/DragAndDrop";
+// import type { ExtentOnSignature } from "ol/interaction/Extent";
+// import type { TranslateOnSignature } from "ol/interaction/Translate";
+// import type { SelectOnSignature } from "ol/interaction/Select";
+// import type { ModifyOnSignature } from "ol/interaction/Modify";
+// import type { DrawOnSignature } from "ol/interaction/Draw";
+
+// import type { FullScreenOnSignature } from "ol/control/FullScreen";
+// import type { MousePositionOnSignature } from "ol/control/MousePosition";
+// import type { ScaleLineOnSignature } from "ol/control/ScaleLine";
+// import { GetPropType, OneOf, Prettify } from "src/utils";
+// import { MapRenderEventTypes } from "ol/render/EventType";
+// import RenderEvent from "ol/render/Event";
+// import MapEvent from "ol/MapEvent";
+
+
+// import type { Types as MapBrowserEventType }  from "ol/MapBrowserEventType"
+// import type { Types as MapEventType }  from "ol/MapEventType"
+
+// type EventClass = Event | BaseEvent;
+// type ListenerFunc<TEvent extends EventClass> = (event: TEvent) => unknown;
+
+
+// type EventsKeyV2<
+//   TTarget extends BaseObject,
+//   TEventKeys extends AllEventKeys,
+//   TListener>
+//   = {
+//     listener: TListener;
+//     target: ThisType<TTarget>;
+//     type: TEventKeys;
+// }
+
+// type OnSignature<
+//   TKey extends string,
+//   TEventClass extends EventClass,
+//   TRet extends Record<string, any>
+// > = (
+//   type: TKey,
+//   listener: ListenerFunc<TEventClass>
+// ) => TRet;
+
+// const m = new OlMap();
+// m.on("")
+
+
+// // type OnFunc<TObject extends BaseObject> = ThisType<T["on"]>;
+
+// type OnFunc = GetPropType<OlMap, "on">
+
+//   , OnSignature<MapObjectEventTypes, ObjectEvent, EventsKey> 
+//   , OnSignature<MapBrowserEventType, MapBrowserEvent<PointerEvent | KeyboardEvent | WheelEvent>, EventsKey> 
+//   , OnSignature<MapEventType, MapEvent, EventsKey> 
+//   , OnSignature<MapRenderEventTypes, RenderEvent, EventsKey>];
+
+  
+// type A = Parameters<OnFunc>
+
+
+// // eslint-disable-next-line @typescript-eslint/no-explicit-any
+// type ExtractEventKeys<T extends (...args: any) => any> = Prettify<
+//   Parameters<T>[0] extends readonly (infer E)[]
+//   ? E extends string
+//     ? E : never
+//   : never
+// >;
+
+// //ol
+// export type ObjectEventKeys = ExtractEventKeys<ObjectOnSignature<EventsKey>>;
+// export type FeatureEventKeys = ExtractEventKeys<FeatureOnSignature<EventsKey>>;
+// export type CollectionEventKeys<T = unknown> = ExtractEventKeys<CollectionOnSignature<T, EventsKey>>;
+// export type MapEventKeys = ExtractEventKeys<MapEventHandler<EventsKey>>;
+// export type OverlayEventKeys = ExtractEventKeys<OverlayOnSignature<EventsKey>>;
+
+// //TODO FIX
+// export type GeolocationEventKeys = ExtractEventKeys<GeolocationOnSignature<EventsKey>>;
+// export type ViewEventKeys = ExtractEventKeys<ViewOnSignature<EventsKey>>;
+
+// // ol/layer
+// export type BaseLayerEventKeys = ExtractEventKeys<BaseLayerOnSignature<EventsKey>>;
+// export type BaseTileEventKeys = ExtractEventKeys<BaseTileLayerOnSignature<EventsKey>>;
+// export type LayerEventKeys = ExtractEventKeys<LayerOnSignature<EventsKey>>;
+// // export type HeatmapEventKeys = ExtractEventKeys<HeatmapOnSignature<EventsKey>>;
+// export type VectorTileEventKeys = ExtractEventKeys<VectorTileLayerOnSignature<EventsKey>>;
+// export type GroupEventKeys = ExtractEventKeys<GroupOnSignature<EventsKey>>;
+
+// // ol/source
+// export type TileEventKeys = ExtractEventKeys<TileSourceOnSignature<EventsKey>>;
+// export type RasterSourceEventKeys = ExtractEventKeys<RasterSourceOnSignature<EventsKey>>;
+// export type ImageSourceEventKeys = ExtractEventKeys<ImageSourceOnSignature<EventsKey>>;
+// export type VectorSourceEventKeys = ExtractEventKeys<VectorSourceOnSignature<EventsKey>>;
+
+// // ol/interaction
+// export type InteractionEventKeys = ExtractEventKeys<InteractionOnSignature<EventsKey>>;
+// export type DragBoxEventKeys = ExtractEventKeys<DragBoxOnSignature<EventsKey>>;
+// export type SnapEventKeys = ExtractEventKeys<SnapOnSignature<EventsKey>>;
+// export type DragAndDropEventKeys = ExtractEventKeys<DragAndDropOnSignature<EventsKey>>;
+// export type ExtentEventKeys = ExtractEventKeys<ExtentOnSignature<EventsKey>>;
+// export type TranslateEventKeys = ExtractEventKeys<TranslateOnSignature<EventsKey>>;
+// export type SelectEventKeys = ExtractEventKeys<SelectOnSignature<EventsKey>>;
+// export type ModifyEventKeys = ExtractEventKeys<ModifyOnSignature<EventsKey>>;
+// export type DrawEventKeys = ExtractEventKeys<DrawOnSignature<EventsKey>>;
+
+// // ol/control
+// export type FullScreenEventKeys = ExtractEventKeys<FullScreenOnSignature<EventsKey>>;
+// export type MousePositionEventKeys = ExtractEventKeys<MousePositionOnSignature<EventsKey>>;
+// export type ScaleLineEventKeys = ExtractEventKeys<ScaleLineOnSignature<EventsKey>>;
+
+// type GroupedEventKeys = [
+//   ObjectEventKeys,
+//   FeatureEventKeys,
+//   CollectionEventKeys,
+//   MapEventKeys,
+//   OverlayEventKeys,
+//   // GeolocationEventKeys, TODO FIX
+//   ViewEventKeys,
+//   BaseLayerEventKeys,
+//   BaseTileEventKeys,
+//   LayerEventKeys,
+//   //HeatmapEventKeys,
+//   VectorTileEventKeys,
+//   GroupEventKeys,
+//   TileEventKeys,
+//   RasterSourceEventKeys,
+//   ImageSourceEventKeys,
+//   VectorSourceEventKeys,
+//   InteractionEventKeys,
+//   DragBoxEventKeys,
+//   SnapEventKeys,
+//   DragAndDropEventKeys,
+//   ExtentEventKeys,
+//   TranslateEventKeys,
+//   SelectEventKeys,
+//   ModifyEventKeys,
+//   DrawEventKeys,
+//   FullScreenEventKeys,
+//   MousePositionEventKeys,
+//   ScaleLineEventKeys
+// ];
+
+// type AllEventKeys = OneOf<GroupedEventKeys>;
+
+// type ObjectEventMap = {
+//   "change": Event
+//   "error": Event
+//   "propertychange": ObjectEvent
+// }
+// type MapEventMap = {
+//   "click": MapBrowserEvent<PointerEvent>;
+//   "dblclick": MapBrowserEvent<PointerEvent>;
+//   "singleclick": MapBrowserEvent<PointerEvent>;
+//   "pointermove": MapBrowserEvent<PointerEvent>;
+//   "moveend": BaseEvent;
+//   "movestart": BaseEvent;
+//   "change": BaseEvent;
+//   "error": BaseEvent;
+//   "propertychange": BaseEvent;
+//   "change:layergroup": BaseEvent;
+//   "change:size": BaseEvent;
+//   "change:target": BaseEvent;
+//   "change:view": BaseEvent;
+//   "postrender": BaseEvent;
+//   "loadstart": BaseEvent;
+//   "loadend": BaseEvent;
+//   "precompose": BaseEvent;
+//   "postcompose": BaseEvent;
+//   // "rendercomplete" BaseEvent;
+// };
+
+// type S = InstanceType<typeof OlMap>;
+
+
+
+// type EventMapper = Record<AllEventKeys, typeof Event>;
+
+// // Extract the event type and handler signature from target.on()
+// type ExtractOnSignature<T> = T extends {
+//   on(type: infer EventType, listener: infer Handler): any;
+// } ? [EventType, Handler]  : never;
+
+// type ABF = ExtractOnSignature<OlMap>;
+
+// // Build a handler map from all overloads of target.on()
+// type DefineHandlers<T> = {
+//   [K in ExtractOnSignature<T>["eventType"]]?: Extract
+//   ExtractOnSignature<T>,
+//     { eventType: K }
+//   > ["handler"];
+// };
+
+
+
+// //BaseEvent (ol/events/Event)
+// //Subclasses;
+// // CollectionEvent
+// // GeolocationError
+// // MapEvent
+// // ObjectEvent
+// // SnapEvent
+// // DragAndDropEvent
+// // DragBoxEvent
+// // DrawEvent
+// // ExtentEvent
+// // ModifyEvent
+// // SelectEvent
+// // TranslateEvent
+// // GroupEvent
+// // RenderEvent
+// // ImageSourceEvent
+// // RasterSourceEvent
+// // TileSourceEvent
+// // VectorSourceEvent
+
+
+// // type OnSignature<Type extends string, EventClass extends Event | BaseEvent, Return> = (type: Type, listener: (event: EventClass) => unknown) => Return
+

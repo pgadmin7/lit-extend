@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "types": [
+      "vite/client"
+    ],
+    "typeRoots": ["./node_modules/@types", "./packages/*/node_modules/@types"]
+  },
+  "exclude": [
+    "node_modules",
+    "**/node_modules",
+    "dev-certs",
+    "**/dev-certs",
+    "dist",
+    "**/dist",
+    ".wireit",
+    "**/.wireit",
+    "./.rollup.cache",
+    "**/.rollup.cache"
+  ]
+}

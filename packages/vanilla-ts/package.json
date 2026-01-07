@@ -1,0 +1,32 @@
+{
+  "name": "vanilla-ts",
+  "version": "0.0.1",
+  "private": true,
+  "description": "",
+  "type": "module",
+  "wireit": {
+    "dev": {
+      "command": "vite dev --force",
+      "service": true
+    },
+    "build": {
+      "command": "vite build",
+      "clean": true,
+      "files": [
+        "src/**/*.ts",
+        "tsconfig.json",
+        "vite-config.mts"
+      ],
+      "output": [
+        "dist",
+        ".tsbuildinfo"
+      ]
+    }
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "~5.9.3",
+    "vite": "^7.3.0"
+  },
+  "peerDependencies": {}
+}
