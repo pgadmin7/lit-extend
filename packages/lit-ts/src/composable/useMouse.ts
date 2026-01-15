@@ -1,11 +1,15 @@
-import { ComposableContext } from "src/lit-extends/composableMixin";
+import { reactive, ref } from "@yiin/reactive-proxy-state";
+import { ComposableContext } from "../lit-extends/composableMixin";
 
 
-export function useMouse({ ref, onMounted, onUnmounted }: ComposableContext) {
-  const coordinate = ref({x: 0, y: 0});
+export function useMouse({onMounted, onUnmounted } : ComposableContext) {
+  const someRef = ref("hellow");
+  const someNestedRef = ref({ dep0: "hellow" });
+  const state = reactive({ x: 0, y: 0, count: 0 });
 
   async function handler(e: MouseEvent) {
-    coordinate.value = { x: e.clientX, y:  e.clientY };
+    state.x = e.clientX;
+    state.y = e.clientY;
   }
 
   onMounted(() => {
@@ -16,5 +20,9 @@ export function useMouse({ ref, onMounted, onUnmounted }: ComposableContext) {
     window.removeEventListener("mousemove", handler);
   });
 
-  return { coordinate };
+  return {
+    someRef,
+    someNestedRef,
+    state
+  };
 }

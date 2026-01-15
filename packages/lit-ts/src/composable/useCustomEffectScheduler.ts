@@ -1,17 +1,14 @@
-import { ReactiveEffectRunner } from "@vue/reactivity";
 import { ReactiveControllerHost } from "lit";
 
-
-export type CustomEffectScheduler = (runner: ReactiveEffectRunner) => void
+export type CustomEffectScheduler = (job: () => void) => void;
 export function useCustomEffectScheduler<T extends ReactiveControllerHost>(host: T) {
-  const effectQueue = new Set<ReactiveEffectRunner>();
+  const effectQueue = new Set<() => void>();
   let flushingEffects = false;
   let rafScheduled = false;
 
   const flushEffects = async () => {
     if (flushingEffects) return;
     flushingEffects = true;
-
     for (const runner of effectQueue) {
       await runner();
     }
@@ -23,13 +20,14 @@ export function useCustomEffectScheduler<T extends ReactiveControllerHost>(host:
       requestAnimationFrame(async () => {
         host.requestUpdate();
         await host.updateComplete;
+        console.log("RENDER SCHEDULAR")
         rafScheduled = false;
       });
     }
   };
 
-  const scheduler: CustomEffectScheduler = (runner: ReactiveEffectRunner) => {
-    effectQueue.add(runner);
+  const scheduler: CustomEffectScheduler = (job: () => void) => {
+    effectQueue.add(job);
     queueMicrotask(flushEffects);
   };
   return scheduler;

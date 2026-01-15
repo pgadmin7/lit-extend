@@ -15,8 +15,10 @@ export type Autocomplete<T extends string> = T | (string & {});
 
 export type IntersectionToUnion<T> = (T extends any ? (x: T) => any : never) extends (x: infer U) => any ? U : never;
 
-export * from "./exclusive-union"
+export * from "./exclusive-union";
 export * from "./overload-union";
 export * from "./union-to-tuple";
 export * from "./guards";
 export * from "./functions";
+
+export type Overwrite<T, U> = Pick<T, Exclude<keyof T, keyof U>> & U;

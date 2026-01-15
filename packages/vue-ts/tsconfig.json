@@ -10,10 +10,9 @@
       "DOM.Iterable",
       "DOM.AsyncIterable",
     ],
-    "types": [],
     "importHelpers": false,
-    "experimentalDecorators": true,
-    "useDefineForClassFields": false,
+    "experimentalDecorators": false,
+    "useDefineForClassFields": true,
     "declaration": true,
     "declarationDir": "dist",
     "declarationMap": true,
@@ -28,6 +27,7 @@
     "noImplicitAny": true,
     "noImplicitThis": true,
     "allowSyntheticDefaultImports": true,
+    "libReplacement":false,
     "skipLibCheck": true,
     "noEmit": true,
     "noUncheckedIndexedAccess": true,
@@ -40,19 +40,18 @@
     "composite": true,
     "baseUrl": ".",
     "rootDir": "./src",
+    "jsx": "preserve",
+    "jsxImportSource": "vue",
     "paths": {
       "@/": ["./src"]
     },
     "sourceMap": true,
-    "plugins": [
-      {
-        "name": "ts-lit-plugin",
-        "strict": true
-      }
-    ]
+    "plugins": []
   },
   "include": [
-    "./src"
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue"
   ],
   "exclude": [
     "./dist",
@@ -60,6 +59,7 @@
     "./.vite",
     "./.rollup.cache",
     "./node_modules",
-    "../../node_modules"
+    "../../node_modules",
+    "./*.js"
   ]
 }

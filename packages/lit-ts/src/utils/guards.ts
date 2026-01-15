@@ -1,6 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Func } from "./functions";
 
+export type IsIterable<T, R = never> = T extends Iterable<any> ? T : R;
+export type IsArrayLike<T, R = never> = T extends ArrayLike<any> ? T : R;
+
 export type IsArray<T, R = never> = T extends Array<any> ? T : R;
 export type IsNotArray<T, R = never> = T extends Array<any> ? R : T;
 

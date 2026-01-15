@@ -29,6 +29,11 @@
       "dependencies": [
         "./packages/vanilla-ts:build"
       ]
+    },
+    "vue-ts:dev": {
+      "dependencies": [
+        "./packages/vue-ts:dev"
+      ]
     }
   },
   "scripts": {
@@ -38,7 +43,12 @@
     "vts:lint": "eslint packages/vanilla-ts/src --quiet --config packages/vanilla-ts/eslint.config.mjs",
     "lit:dev": "wireit",
     "lit:build": "wireit",
-    "lit:lint": "eslint packages/lit-ts/src --quiet --config packages/lit-ts/eslint.config.mjs"
+    "lit:lint": "eslint packages/lit-ts/src --quiet --config packages/lit-ts/eslint.config.mjs",
+    "coverage": "vitest run --coverage",
+    "test": "vitest",
+    "list": "vitest list",
+    "test:ui": "vitest --ui",
+    "vue-ts:dev": "wireit"
   },
   "dependencies": {},
   "devDependencies": {
@@ -51,9 +61,16 @@
     "@eslint/js": "^9.39.2",
     "prettier": "^3.7.4",
     "eslint-config-prettier": "^10.1.8",
-    "vite": "7.3.0",
+    "vite": "latest",
     "typescript": "^5.9.3",
-    "wireit": "^0.14.12"
+    "wireit": "^0.14.12",
+    "@vitest/browser-playwright": "latest",
+    "jsdom": "latest",
+    "playwright": "^1.57.0",
+    "vitest": "latest",
+    "vite-plugin-vue-devtools": "^8.0.5",
+    "vue-flow-vis": "^1.3.0",
+    "vite-plugin-inspect":"^11.3.3"
   },
   "engines": {
     "node": "24.12.0"

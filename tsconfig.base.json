@@ -15,6 +15,7 @@
     ".wireit",
     "**/.wireit",
     "./.rollup.cache",
-    "**/.rollup.cache"
+    "**/.rollup.cache",
+    "**/vite",
   ]
 }

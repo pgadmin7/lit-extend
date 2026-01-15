@@ -1,11 +1,12 @@
 import { defineConfig } from "vite";
+import Inspect from "vite-plugin-inspect";
 
 export default defineConfig({
   root: "./",
   base: "/",
   server: {
     strictPort: true,
-    port: 5174,
+    port: 5174
   },
   publicDir: "public",
   resolve: {},
@@ -13,9 +14,9 @@ export default defineConfig({
     target: "ES2022",
     outDir: "./dist",
     emptyOutDir: true,
-    sourcemap: true,
+    sourcemap: true
   },
-  plugins: [],
+  plugins: [Inspect()],
   optimizeDeps: {
     include: []
   }

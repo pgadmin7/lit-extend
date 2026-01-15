@@ -28,7 +28,7 @@ export default [
   eslintJs.configs.recommended,
   ...tseslint.configs.recommended,
   {
-    files: ['**/*.ts', '**/*.vue'],
+    files: ['**/*.ts'],
     languageOptions: {
       parser: tseslint.parser,
       parserOptions: {
@@ -36,7 +36,7 @@ export default [
         sourceType: 'module',
         project: path.resolve(__dirname, "tsconfig.json"),
         tsconfigRootDir: __dirname,
-        extraFileExtensions: [".vue", ".ts"]
+        extraFileExtensions: [".vue"]
 
       },
       globals: {
