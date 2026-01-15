@@ -4,14 +4,13 @@ import viteLogo from '/vite.svg';
 import typescriptLogo from '/typescript.svg';
 import { setupCounter } from './counts';
 import "./components";
-import { attachLitDomRerenderDebugger } from './composable/debuggerLit';
+// import { attachLitDomRerenderDebugger } from './composable/debuggerLit';
 
 document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
   <div>
-    <h1> new </h1>
-    <shared-counter-v2> </shared-counter-v2>
+    <h1>Lit + Vue like Reactivity + Composables</h1>
+    <shared-counter> </shared-counter>
 
-    <h1> OLD </h1>
     <a href="https://vite.dev" target="_blank">
       <img src="${viteLogo}" class="logo" alt="Vite logo" />
     </a>
@@ -29,4 +28,4 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
 `;
 
 setupCounter(document.querySelector<HTMLButtonElement>('#counter')!)
-const _debugger = attachLitDomRerenderDebugger();
+// const _debugger = attachLitDomRerenderDebugger();

@@ -8,7 +8,6 @@ export type ComposableContext = {
   onUnmounted: (hook: () => void) => void;
 };
 
-
 export type Composable = (ctx: ComposableContext, ...args: any[]) => any;
 export type ComposableArgs<F> = F extends (ctx: ComposableContext, ...args: infer P) => any ? P : never;
 export type ComposableRet<F> = F extends (ctx: ComposableContext, ...args: any[]) => infer R ? R : never;

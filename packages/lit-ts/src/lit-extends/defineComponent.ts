@@ -1,30 +1,10 @@
 import { TemplateResult } from "lit/html.js";
 import { ExtentedLitElement } from "./index";
-import { ComputedRef, isRef, Ref, watchEffect, WatchEffectStopHandle, WritableComputedRef } from "@yiin/reactive-proxy-state";
+import { watchEffect, WatchEffectStopHandle } from "@yiin/reactive-proxy-state";
 import { isFunction, isObject } from "../shared/general";
+import { wrapAsync } from "../core/promise";
 
 export type LifeCycleHook = "beforeUpdate" | "updated" | "beforeMounted" | "mount" | "beforeUnmounted" | "unmount";
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type MaybeRef<T = any> = T | Ref<T> | WritableComputedRef<T>;
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type MaybeRefOrGetter<T = any> = MaybeRef<T> | ComputedRef<T> | (() => T);
-
-export function toValue<T>(source: MaybeRefOrGetter<T>): T {
-  if(isFunction(source)){
-    return source();
-  }
-  if(isRef(source)) {
-    return source.value
-  }
-  return source;
-}
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function wrapAsync<T extends any[], R>(fn: (...args: T) => R | Promise<R>) {
-  return (...args: T): Promise<R> => Promise.resolve(fn(...args));
-}
 
 export type SetupContext = {
   nextTick: () => Promise<void>;
@@ -67,7 +47,6 @@ export function defineComponent({ name, setup }: defineComponentParams) {
   };
 
   const __execHooks = async (type: LifeCycleHook) => {
-    console.log(`LIFECYCLE HOOK TRIGGER: ${type}`);
     const resolve = async (h: LifeCycleHook) => {
       queueMicrotask(async () => {
         await Promise.all(Array.from(__hooks[h]).map((i) => wrapAsync(i)()));
@@ -107,7 +86,6 @@ export function defineComponent({ name, setup }: defineComponentParams) {
   };
 
   const __connectedCallbackFn = async () => {
-    console.log("connectedCallback");
     __isMounted = false;
     __isUnmounted = false;
     __isUnmounting = false;
@@ -118,7 +96,6 @@ export function defineComponent({ name, setup }: defineComponentParams) {
   };
 
   const __disconnectedCallback = async () => {
-    console.log("disconnectedCallback");
     __isUnmounting = true;
     await __execHooks("beforeUnmounted");
     await __execHooks("unmount");
@@ -173,9 +150,9 @@ export function defineComponent({ name, setup }: defineComponentParams) {
       this.__unwatch?.();
       this.__unwatch = undefined;
       this.__unwatch = watchEffect((onCleanup) => {
-        console.log(__template().values)
+        void __template().values;
         onCleanup(async () => this.requestUpdate());
-      }, {});
+      });
       __connectedCallbackFn();
     }
 

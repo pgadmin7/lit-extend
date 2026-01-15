@@ -3,7 +3,7 @@ import { ComposableContext } from "../lit-extends/composableMixin";
 
 
 export function useMouse({onMounted, onUnmounted } : ComposableContext) {
-  const someRef = ref("hellow");
+  const someRef = ref("Hello From Ref");
   const someNestedRef = ref({ dep0: "hellow" });
   const state = reactive({ x: 0, y: 0, count: 0 });
 
