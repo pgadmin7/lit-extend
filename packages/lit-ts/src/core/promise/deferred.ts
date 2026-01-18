@@ -1,21 +1,22 @@
-// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-if (Promise.withResolvers === undefined) {
-    function __withResolvers<T, TError = unknown>(): PromiseWithResolvers<T, TError> {
-      let resolve: PromiseWithResolvers<T,TError>["resolve"];
-      let reject: PromiseWithResolvers<T, TError>["reject"];
-      const promise = new Promise<T>((res, rej) => {
-        resolve = res;
-        reject = rej;
-      });
-      return { promise, resolve: resolve!, reject: reject! };
-    }
-    
-    Object.defineProperty(Promise, "withResolvers", {
-      value: __withResolvers,
-      writable: false,
-      configurable: false,
-      enumerable: false
+import { Guard } from "../../shared";
+
+if (Guard.isUndefined(Promise.withResolvers)) {
+  function __withResolvers<T, TError = unknown>(): PromiseWithResolvers<T, TError> {
+    let resolve: PromiseWithResolvers<T, TError>["resolve"];
+    let reject: PromiseWithResolvers<T, TError>["reject"];
+    const promise = new Promise<T>((res, rej) => {
+      resolve = res;
+      reject = rej;
     });
+    return { promise, resolve: resolve!, reject: reject! };
+  }
+
+  Object.defineProperty(Promise, "withResolvers", {
+    value: __withResolvers,
+    writable: false,
+    configurable: false,
+    enumerable: false
+  });
 }
 
 declare global {

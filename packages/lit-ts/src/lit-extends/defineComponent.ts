@@ -1,8 +1,7 @@
 import { TemplateResult } from "lit/html.js";
 import { ExtentedLitElement } from "./index";
 import { watchEffect, WatchEffectStopHandle } from "@yiin/reactive-proxy-state";
-import { isFunction, isObject } from "../shared/general";
-import { wrapAsync } from "../core/promise";
+import { Guard } from "../shared";
 
 export type LifeCycleHook = "beforeUpdate" | "updated" | "beforeMounted" | "mount" | "beforeUnmounted" | "unmount";
 
@@ -24,7 +23,7 @@ export type defineComponentParams = {
   setup: SetupFn;
 };
 
-export function defineComponent({ name, setup }: defineComponentParams) {
+export function defineComponentV2({ name, setup }: defineComponentParams) {
   
   const __hooks: Record<LifeCycleHook, Set<() => unknown>> = {
     beforeMounted: new Set<() => unknown>(),
@@ -49,7 +48,7 @@ export function defineComponent({ name, setup }: defineComponentParams) {
   const __execHooks = async (type: LifeCycleHook) => {
     const resolve = async (h: LifeCycleHook) => {
       queueMicrotask(async () => {
-        await Promise.all(Array.from(__hooks[h]).map((i) => wrapAsync(i)()));
+        await Promise.all(Array.from(__hooks[h]).map((i) => Promise.wrapAsync(i)()));
       });
     };
 
@@ -134,13 +133,13 @@ export function defineComponent({ name, setup }: defineComponentParams) {
       if (data == null) {
         return;
       }
-      if (Array.isArray(data)) {
+      if (Guard.isArray(data)) {
         return;
       }
-      if (isFunction(data)) {
+      if (Guard.isFunction(data)) {
         return;
       }
-      if (isObject(data)) {
+      if (Guard.isObject(data)) {
         this.__data = data;
       }
     }

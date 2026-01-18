@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { LitElement, ReactiveControllerHost } from "lit";
-import { Constructor } from "../utils";
+import { Constructor } from "../shared";
 
 export type ComposableContext = {
   nextTick: () => Promise<void>;

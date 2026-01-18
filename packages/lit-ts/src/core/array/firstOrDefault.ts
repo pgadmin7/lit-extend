@@ -1,11 +1,12 @@
-// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-if (Array.prototype.firstOrDefault === undefined) {
+import { Guard } from "../../shared";
+
+if (Guard.isUndefined(Array.prototype.firstOrDefault)) {
   Object.defineProperty(Array.prototype, "firstOrDefault", {
     value: function <T, TDefault = undefined>(this: T[], fallback?: TDefault): TDefault | T {
       const defaultFallback: TDefault = fallback !== undefined ? fallback : (undefined as TDefault);
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       if (this == null) return defaultFallback;
-      if (!Array.isArray(this)) return defaultFallback;
+      if (!Guard.isArray(this)) return defaultFallback;
       return this.length > 0 ? (this[0] as T) : defaultFallback;
     },
     writable: false,

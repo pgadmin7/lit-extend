@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export type Constructor<T = {}> = new (...args: any[]) => T;
+export type Constructor<TClass = {}> = new (...args: any[]) => TClass;
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export type AbstractConstructor<TClass = {}> = abstract new (...args: any[]) => TClass;
 
 export type Maybe<T> = T | null | undefined;
 export type ValueObject<T> = { type: string; value: T };
@@ -22,3 +24,5 @@ export * from "./guards";
 export * from "./functions";
 
 export type Overwrite<T, U> = Pick<T, Exclude<keyof T, keyof U>> & U;
+
+export type IfDefined<T, TFallback> = T extends null | undefined ? TFallback : T;
