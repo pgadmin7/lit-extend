@@ -1,3 +1,3 @@
 import "./sharedCounter";
 
-export { SharedCounterComponent } from "./sharedCounter";
+export * from "./sharedCounter";

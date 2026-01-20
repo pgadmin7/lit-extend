@@ -1,5 +1,5 @@
-import type { CSSResultGroup, PropertyDeclaration, TemplateResult } from "lit";
-import { html, LitElement } from "lit";
+import type { CSSResultGroup, PropertyDeclaration } from "lit";
+import { LitElement } from "lit";
 import {
   ValidatedCustomElementName,
   ValidCustomElementName,
@@ -8,7 +8,6 @@ import {
 import { Guard, stubFn } from "../../shared";
 import { withHooks } from "./hooks";
 import { withCurrentInstance } from "../currentInstance";
-import { until } from "lit/directives/until.js";
 
 export type PublicApi = {
   $nextTick(fn?: () => unknown): Promise<boolean>;
@@ -79,8 +78,7 @@ export const defineComponentWithOptions = <
   Parent extends typeof LitElement,
   Instance extends InstanceType<Parent> & UnwrapProps<Properties> & PublicApi,
   Render extends (this: Instance) => unknown,
-  Setup extends (this: Instance, comp?: Instance) => void | Render,
-  Loader extends (this: Instance) => unknown
+  Setup extends (this: Instance, comp?: Instance) => void | Render
 >(
   options: {
     name?: ValidatedCustomElementName<Name>;
@@ -93,7 +91,6 @@ export const defineComponentWithOptions = <
 
     setup?: Setup;
     render?: Render;
-    loader?: Loader;
   },
   decorator: LitElementDecorator
 ): typeof LitElement & PublicApi => {
@@ -105,7 +102,7 @@ export const defineComponentWithOptions = <
     static properties = options.props ?? ({} as Properties);
     static styles = options.styles ?? undefined;
 
-    protected createRenderRoodt(): HTMLElement | DocumentFragment {
+    protected createRenderRoot(): HTMLElement | DocumentFragment {
       return options.shadowRoot === false ? this : super.createRenderRoot();
     }
 
@@ -114,10 +111,6 @@ export const defineComponentWithOptions = <
       withCurrentInstance(this, () => {
         assignDefaultValues(this, options.props);
         const setupResult = options.setup?.call(this as unknown as Instance, this as unknown as Instance);
-
-        if (Guard.isNotNullish(options.loader)) {
-          this.__opts.loader = options.loader!;
-        }
 
         if (Guard.isFunctionLike(setupResult)) {
           this.__opts.render = setupResult;
@@ -135,29 +128,14 @@ export const defineComponentWithOptions = <
       });
     }
 
-    private async __render() {
-      if (Guard.isNullish(this.__opts.render)) return;
-
-      if (this.__opts.__readyForRender.value !== true) {
-        await this.__opts.__readyForRender.wait();
-      }
-
-      if (Guard.isAsyncFunction(this.__opts.render)) {
-        return await this.__opts.render.call(this);
-      }
-      return this.__opts.render.call(this);
-    }
-
     render() {
       return withCurrentInstance(this, () => {
-        const response = until(
-          this.__render().then((t) => {
-            return t;
-          }),
-          this.__opts.loader()
-        );
+        if (Guard.isNullish(this.__opts.render)) return;
 
-        return html`${response}`;
+        if (Guard.isAsyncFunction(this.__opts.render)) {
+          throw Error("Render function cannot be async!");
+        }
+        return this.__opts.render.call(this);
       });
     }
   };
@@ -184,17 +162,15 @@ export type FunctionComponentOptions = {
 export const defineFunctionalComponent = <Name extends ValidCustomElementName>(
   name: ValidatedCustomElementName<Name>,
   render: () => unknown,
-  loader: () => unknown,
   opts = {} as FunctionComponentOptions,
   decorator: LitElementDecorator
-) => defineComponentWithOptions({ ...opts, name, render, loader, shadowRoot: false }, decorator);
+) => defineComponentWithOptions({ ...opts, name, render, shadowRoot: false }, decorator);
 
 export type SkipLastParam<T extends unknown[]> = T extends [...infer U, unknown] ? U : never;
 
 export function defineComponent(
   name: ValidCustomElementName,
   render: () => unknown,
-  loader: () => unknown,
   opts?: FunctionComponentOptions
 ): typeof LitElement & PublicApi;
 
@@ -206,8 +182,7 @@ export function defineComponent<
   Parent extends typeof LitElement,
   Instance extends InstanceType<Parent> & UnwrapProps<Properties> & PublicApi,
   Render extends (this: Instance) => unknown,
-  Setup extends (this: Instance, comp?: Instance) => void | Render,
-  Loader extends (this: Instance) => unknown
+  Setup extends (this: Instance, comp?: Instance) => void | Render
 >(options: {
   name?: ValidatedCustomElementName<Name>;
   parent?: Parent;
@@ -217,15 +192,14 @@ export function defineComponent<
   shadowRoot?: UseShadowRoot;
   setup?: Setup;
   render?: Render;
-  loader?: Loader;
 }): typeof LitElement & PublicApi;
 
 export function defineComponent(
   ...args:
-    | [name: ValidCustomElementName, render: () => unknown, loader: () => unknown, opts?: FunctionComponentOptions]
+    | [name: ValidCustomElementName, render: () => unknown, opts?: FunctionComponentOptions]
     | SkipLastParam<Parameters<typeof defineComponentWithOptions>>
 ) {
   return Guard.isString(args[0])
-    ? defineFunctionalComponent(args[0], args[1] as () => unknown, args[2] as () => unknown, args[3], (l) => l)
+    ? defineFunctionalComponent(args[0], args[1] as () => unknown, args[2], (l) => l)
     : defineComponentWithOptions(args[0], (l) => l);
 }

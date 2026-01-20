@@ -28,18 +28,40 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  flex-direction: row;
+  justify-content: center;
+  text-align: justify;
 }
 
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
 }
-
-#app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+h2 {
+  margin: 0;
+  padding: 10px 0;
+}
+.motivation {
+  max-width: 500px;
+}
+.motivation > div.intro {
+  font-style: italic;
+}
+.pill-group {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+.pill-group > span {
+  padding: 3px 8px;
+  margin: 5px 10px;
+  background-color: #323680;
+  border-radius: 8px;
+  display: inline-block;
+}
+.pill-group > span,
+.pill-group > span a{
+    color: #ffffff;
 }
 
 .logo {

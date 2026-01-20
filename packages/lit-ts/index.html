@@ -5,11 +5,71 @@
   <meta charset="UTF-8" />
   <link rel="icon" type="image/svg+xml" href="/vite.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Vite + TS</title>
+  <title>Vite + Lit + TS</title>
+  <link rel="stylesheet" href="./src/style.css" />
 </head>
 
 <body>
-  <div id="app"></div>
+  <div id="app">
+    <div>
+      <a target="_blank" href="https://lit.dev/">
+        <img src="/lit.svg" class="logo lit" alt="Lit logo" />
+      </a>
+      <a href="#"><img src="/composition.svg" class="logo" alt="Composition logo" /></a>
+      <a target="_blank" href="https://vite.dev">
+        <img src="/vite.svg" class="logo" alt="Vite logo" />
+      </a>
+      <h1>Composition + Lit</h1>
+      <div class="motivation">
+        <div class="intro">
+          <h3>Motivation</h3>
+          <p>
+            I love <a target="_blank"
+              href="https://lit.dev/docs/#why-should-i-choose-lit">Lit</a>&nbsp;web&nbsp;components
+            but really dislike using Typescript <a target="_blank"
+              href="https://lit.dev/docs/components/decorators/#built-in-decorators">decorators</a>.
+            Although I do understand the use of <code>classes</code> with custom&nbsp;elements.
+            It still sometimes creates unnecessary typing complexity especially working with mixins in TS.
+          </p>
+          <p>
+            Vue went through a similar struggle before Vue&nbsp;3 and
+            decided to drop its <a target="_blank" href="https://class-component.vuejs.org/">Class API</a> support.
+            <a target="_blank"
+              href="https://facing-dev.github.io/vue-facing-decorator/#/?id=information">vue-class-component</a>
+          </p>
+          <p>
+            The solution was the <a target="_blank"
+              href="https://vuejs.org/guide/extras/composition-api-faq.html">Composition&nbsp;API</a> and its
+            reactivity&nbsp;system.
+            It enables clean logic reuse with flexible code organization.
+          </p>
+          <p>Why not to bring that feature to lit?</p>
+      
+          <h3>References</h3>
+          <div class="pill-group">
+            <span><a target="_blank" href="https://github.com/JorisAerts/lit-composition">JorisAerts/lit-composition</a></span>
+            <span><a target="_blank" href="https://github.com/vuejs/core">vuejs/core</a></span>
+            <span><a target="_blank" href="https://github.com/yyx990803/vue-lit">yyx990803/vue-lit</a></span>
+            <span><a target="_blank" href="https://github.com/antfu/reactivue">antfu/reactivue</a></span>
+            <span><a target="_blank" href="https://kermanx.com/reactive-vscode/">Reactive VSCode Extension API</a></span>
+            <span><a target="_blank" href="https://yiin.github.io/reactive-proxy-state/">Yiin/reactive-proxy-state</a></span>
+            <span><a target="_blank" href="https://antfu.me/posts/composable-vue-vueday-2021">Article antfu: Composable Vue</a></span>
+            <span><a target="_blank" href="https://vuejs.org/api/custom-elements">vue docs: Custom Elements API</a></span>
+            <span><a target="_blank" href="https://vuejs.org/api/composition-api-lifecycle.html">vue docs: Lifecycle Hooks</a></span>
+          </div>
+        </div>
+      </div>
+      <p class="read-the-docs">
+        Click on the Vite and Lit logos to learn more
+      </p>
+
+      <div>
+        <h2>Test Samples</h2>
+        <!-- <shared-counter> </shared-counter> -->
+        <my-hello who="yusuf" excited></my-hello>
+      </div>
+    </div>
+  </div>
   <script type="module" src="./src/main.ts"></script>
 </body>
 

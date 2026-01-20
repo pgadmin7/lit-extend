@@ -33,8 +33,8 @@ type InternalOptions<T extends ReactiveElement> = {
   __isMounted: ReturnType<typeof waitableFlag>;
   __isUnmounted: ReturnType<typeof waitableFlag>;
   __isUnmounting: ReturnType<typeof waitableFlag>;
+  __isRendering: ReturnType<typeof waitableFlag>;
   render: LitElement["render"];
-  loader: LitElement["render"];
 
   // Lit native
   connectedCallback: HookInstance<() => void>;
@@ -69,8 +69,8 @@ export function withHooks<
       __isMounted: waitableFlag(false),
       __isUnmounted: waitableFlag(false),
       __isUnmounting: waitableFlag(false),
+      __isRendering: waitableFlag(false),
       render: stubFn,
-      loader: stubFn,
       connectedCallback: createLifecycle(),
       disconnectedCallback: createLifecycle(),
       willUpdate: createLifecycle<ChangedPropertiesFn<typeof this>>(),
@@ -147,11 +147,35 @@ export function withHooks<
     }
 
     protected performUpdate() {
+      // console.log(`GOING TO PERFORM RENDER isRendering: ${this.__opts.__isRendering.value}`);
+      this.__opts.__isRendering.value = true;
       super.performUpdate();
       return this.__opts.performUpdate.callSync(this);
     }
 
-    public requestUpdate(
+    protected override async scheduleUpdate(): Promise<void> {
+      if (this.__opts.__readyForRender.value !== true) {
+        // console.log("not ready");
+        await this.__opts.__readyForRender.wait();
+      }
+
+      // console.log(`isRendering: ${this.__opts.__isRendering.value}`);
+      if (this.__opts.__isRendering.value === true) {
+        // console.log(`waiting to finish render`);
+        await this.__opts.__isRendering.wait();
+      }
+      super.scheduleUpdate();
+    }
+
+    protected async getUpdateComplete(): Promise<boolean> {
+      const result = await super.getUpdateComplete();
+      // this.__opts.__isRendering.value = result;
+
+      // console.log(`Finished RENDER isRendering: ${result}`);
+      return result;
+    }
+
+    public override requestUpdate(
       name?: PropertyKey,
       oldValue?: unknown,
       options?: PropertyDeclaration,
@@ -172,9 +196,10 @@ export function withHooks<
     }
 
     public async $nextTick(fn?: () => unknown): Promise<boolean> {
+      // console.log("Triggering requestUpdate");
       this.requestUpdate();
       const resolved = await this.updateComplete;
-      if (Guard.isNullish(fn) || !Guard.isFunction(fn)) return resolved;
+      if (Guard.isNullish(fn) || (!Guard.isFunction(fn) && !Guard.isAsyncFunction(fn))) return resolved;
       await fn.call(this);
       return resolved;
     }

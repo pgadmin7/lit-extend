@@ -1,5 +1,6 @@
 import { AsyncFunc, Func } from "./utils";
 
+export const arrayEmpty = [] as const;
 export const NOOP = (): void => {};
 
 /* eslint-disable @typescript-eslint/no-explicit-any */

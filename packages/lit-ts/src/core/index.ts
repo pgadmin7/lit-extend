@@ -1,4 +1,4 @@
-import { ComputedRef, isRef, Ref, WritableComputedRef } from "@yiin/reactive-proxy-state";
+import { ComputedRef, isRef, Ref, WritableComputedRef } from "../lit-composition";
 import { Guard } from "../shared";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
