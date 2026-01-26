@@ -1,14 +1,15 @@
 import { LitElement, PropertyDeclaration, type PropertyValues, type ReactiveElement } from "lit";
 import { InternalOptionsSymbol } from "../symbols";
-import { AbstractConstructor, stubFn, Guard } from "../../shared";
+import { AbstractConstructor, stubFn, Guard, Assert } from "../../shared";
 import { getCurrentOptions, withCurrentInstanceAsync, withCurrentInstance } from "../currentInstance";
 import { waitableFlag } from "../utils/waitableFlag";
+import { EffectScope } from "../reactivity/effectScope";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function createLifecycle<THook extends (...args: any[]) => unknown>() {
   const hooks: THook[] = [];
   return {
-    register: (hook: THook) => hooks.push(hook),
+    register: (hook: THook) => { hooks.push(hook)  },
     call: <El extends LitElement>(thisArgs: El, ...args: Parameters<THook>) => {
       return Promise.all(
         hooks.map((hook) => {
@@ -26,9 +27,11 @@ function createLifecycle<THook extends (...args: any[]) => unknown>() {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type HookInstance<T extends (...args: any[]) => unknown> = ReturnType<typeof createLifecycle<T>>;
-type ChangedPropertiesFn<T extends ReactiveElement, TRet = void> = (changedProperties: PropertyValues<T>) => TRet;
+type ChangedPropertiesFn<T extends InternalOptions<ReactiveElement>, TRet = void> = (changedProperties: PropertyValues<T>) => TRet;
 
-type InternalOptions<T extends ReactiveElement> = {
+export type InternalOptions<T extends ReactiveElement> = {
+  readonly uid: number;
+  scope: EffectScope;
   __readyForRender: ReturnType<typeof waitableFlag>;
   __isMounted: ReturnType<typeof waitableFlag>;
   __isUnmounted: ReturnType<typeof waitableFlag>;
@@ -54,6 +57,7 @@ type InternalOptions<T extends ReactiveElement> = {
   unmounted: HookInstance<() => void>;
 };
 
+let id = 0;
 export function withHooks<
   TBase extends AbstractConstructor<LitElement>,
   WithHooksType = abstract new () => LitElement &
@@ -65,6 +69,8 @@ export function withHooks<
   abstract class HooksClass extends Base {
     /** @internal */
     [InternalOptionsSymbol]: InternalOptions<this> = {
+      uid: id++,
+      scope: new EffectScope(),
       __readyForRender: waitableFlag(false),
       __isMounted: waitableFlag(false),
       __isUnmounted: waitableFlag(false),
@@ -115,6 +121,11 @@ export function withHooks<
       return;
     }
     connectedCallback() {
+      if(!this.isConnected) return;
+      const id = this[InternalOptionsSymbol].uid;
+      const scope = this[InternalOptionsSymbol].scope;
+      console.log(id, scope);
+      console.log()
       super.connectedCallback();
       this.__connectedCallback();
     }
@@ -147,7 +158,6 @@ export function withHooks<
     }
 
     protected performUpdate() {
-      // console.log(`GOING TO PERFORM RENDER isRendering: ${this.__opts.__isRendering.value}`);
       this.__opts.__isRendering.value = true;
       super.performUpdate();
       return this.__opts.performUpdate.callSync(this);
@@ -155,11 +165,8 @@ export function withHooks<
 
     protected override async scheduleUpdate(): Promise<void> {
       if (this.__opts.__readyForRender.value !== true) {
-        // console.log("not ready");
         await this.__opts.__readyForRender.wait();
       }
-
-      // console.log(`isRendering: ${this.__opts.__isRendering.value}`);
       if (this.__opts.__isRendering.value === true) {
         // console.log(`waiting to finish render`);
         await this.__opts.__isRendering.wait();
@@ -169,9 +176,6 @@ export function withHooks<
 
     protected async getUpdateComplete(): Promise<boolean> {
       const result = await super.getUpdateComplete();
-      // this.__opts.__isRendering.value = result;
-
-      // console.log(`Finished RENDER isRendering: ${result}`);
       return result;
     }
 
@@ -207,25 +211,27 @@ export function withHooks<
   return HooksClass as unknown as WithHooksType;
 }
 
-function options<T extends LitElement>() {
-  return getCurrentOptions<InternalOptions<T>>();
+function options<T extends InternalOptions<ReactiveElement>>() {
+  const options = getCurrentOptions();
+
+  Assert.defined(options)
+  return options as T
 }
 
 type SomeFunc = (...args: unknown[]) => unknown;
 // Lit native hooks
-export const onConnected = <T extends LitElement>(cb: SomeFunc) => options<T>().connectedCallback.register(cb);
-export const onDisconnected = <T extends LitElement>(cb: SomeFunc) => options<T>().disconnectedCallback.register(cb);
-export const onShouldUpdate = <T extends LitElement>(cb: ChangedPropertiesFn<T, boolean>) =>
-  options<T>().shouldUpdate.register(cb);
-export const onWillUpdate = <T extends LitElement>(cb: ChangedPropertiesFn<T>) => options<T>().willUpdate.register(cb);
-export const onPerformUpdate = <T extends LitElement>(cb: SomeFunc) => options<T>().performUpdate.register(cb);
-export const onUpdate = <T extends LitElement>(cb: ChangedPropertiesFn<T>) => options<T>().update.register(cb);
-export const onFirstUpdated = <T extends LitElement>(cb: ChangedPropertiesFn<T>) =>
-  options<T>().firstUpdated.register(cb);
-export const onUpdated = <T extends LitElement>(cb: ChangedPropertiesFn<T>) => options<T>().updated.register(cb);
+export const onConnected = (cb: SomeFunc) => options().connectedCallback.register(cb);
+export const onDisconnected = (cb: SomeFunc) => options().disconnectedCallback.register(cb);
+export const onShouldUpdate = <T extends LitElement>(cb: ChangedPropertiesFn<T, boolean>) => options().shouldUpdate.register(cb);
+export const onWillUpdate = <T extends LitElement>(cb: ChangedPropertiesFn<T>) => options().willUpdate.register(cb);
+export const onPerformUpdate = (cb: SomeFunc) => options().performUpdate.register(cb);
+export const onUpdate = <T extends LitElement>(cb: ChangedPropertiesFn<T>) => options().update.register(cb);
+export const onFirstUpdated = <T extends LitElement>(cb: ChangedPropertiesFn<T>) => options().firstUpdated.register(cb);
+export const onUpdated = <T extends LitElement>(cb: ChangedPropertiesFn<T>) => options().updated.register(cb);
+
 // Vue3 style hooks
-export const onBeforeMount = <T extends LitElement>(cb: SomeFunc) => options<T>().beforeMount.register(cb);
-export const onBeforeUnmount = <T extends LitElement>(cb: SomeFunc) => options<T>().beforeUnmount.register(cb);
-export const onBeforeUpdate = <T extends LitElement>(cb: SomeFunc) => options<T>().beforeUpdate.register(cb);
-export const onMounted = <T extends LitElement>(cb: SomeFunc) => options<T>().mounted.register(cb);
-export const onUnmounted = <T extends LitElement>(cb: SomeFunc) => options<T>().unmounted.register(cb);
+export const onBeforeMount = (cb: SomeFunc) => options().beforeMount.register(cb);
+export const onBeforeUnmount = (cb: SomeFunc) => options().beforeUnmount.register(cb);
+export const onBeforeUpdate = (cb: SomeFunc) => options().beforeUpdate.register(cb);
+export const onMounted = (cb: SomeFunc) => options().mounted.register(cb);
+export const onUnmounted = (cb: SomeFunc) => options().unmounted.register(cb);

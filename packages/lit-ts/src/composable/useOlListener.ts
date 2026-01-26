@@ -3,10 +3,9 @@
 import type { Observable } from "ol";
 import { unByKey } from "ol/Observable";
 import { EventsKey } from "ol/events";
-import { MaybeRefOrGetter, toValue } from "../core";
-
-import { OverloadParameters, IsArray, IsNotArray, Prettify, GetPropType } from "../utils";
-import { ComposableContext } from "../lit-extends/composableMixin";
+import { onMounted, onUnmounted } from "../lit-composition";
+import { OverloadParameters, IsArray, IsNotArray, Prettify, GetPropType } from "../shared";
+import { MaybeRefOrGetter, toValue } from "../lit-composition";
 export const defineHandlers = <T extends Observable>(handlers: HandlerMap<T>) => handlers;
 
 type OnlySingleType<TIn> = TIn extends [type: infer T, listener: infer L]
@@ -23,7 +22,6 @@ export type HandlerMap<T extends Observable> = Prettify<Partial<ToRecord<OnlySin
 
 // Build handler map
 export function useOlListener<T extends Observable>(
-  { onMounted, onUnmounted }: ComposableContext,
   target: MaybeRefOrGetter<T | null>,
   handlers: HandlerMap<T>
 ) {

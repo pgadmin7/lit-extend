@@ -1,15 +1,11 @@
-import { reactive, ref } from "@yiin/reactive-proxy-state";
-import { ComposableContext } from "../lit-extends/composableMixin";
+import { reactive, onMounted, onUnmounted } from "../lit-composition";
 
-
-export function useMouse({onMounted, onUnmounted } : ComposableContext) {
-  const someRef = ref("Hello From Ref");
-  const someNestedRef = ref({ dep0: "hellow" });
-  const state = reactive({ x: 0, y: 0, count: 0 });
+export function useMouse() {
+  const coordinate = reactive({ x: 0, y: 0 });
 
   async function handler(e: MouseEvent) {
-    state.x = e.clientX;
-    state.y = e.clientY;
+    coordinate.x = e.clientX;
+    coordinate.y = e.clientY;
   }
 
   onMounted(() => {
@@ -17,12 +13,9 @@ export function useMouse({onMounted, onUnmounted } : ComposableContext) {
   });
 
   onUnmounted(() => {
+    console.log("unmounted");
     window.removeEventListener("mousemove", handler);
   });
 
-  return {
-    someRef,
-    someNestedRef,
-    state
-  };
+  return { coordinate };
 }

@@ -7,7 +7,7 @@ import {
 } from "../utils/validCustomElementName";
 import { Guard, stubFn } from "../../shared";
 import { withHooks } from "./hooks";
-import { withCurrentInstance } from "../currentInstance";
+import { getCurrentInstanceId, getCurrentScope, withCurrentInstance } from "../currentInstance";
 
 export type PublicApi = {
   $nextTick(fn?: () => unknown): Promise<boolean>;

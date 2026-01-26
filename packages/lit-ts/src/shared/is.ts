@@ -18,10 +18,12 @@ export const isArrayLike = <T = unknown>(value: unknown): value is ArrayLike<T> 
 };
 
 const is = (value: unknown, type: string): boolean => Object.prototype.toString.call(value) === `[object ${type}]`;
-export const getRawType = (value: unknown): string => {
-  // extract "RawType" from strings like "[object RawType]"
-  return Object.prototype.toString.call(value).slice(8, -1);
-};
+/**
+ * extract "RawType" from strings like "[object RawType]"
+ * @param value 
+ * @returns Raw type as string
+ */
+const getRawType = (value: unknown): string => Object.prototype.toString.call(value).slice(8, -1);
 
 export const isString = (val: unknown): val is string => typeof val === "string";
 export const isSymbol = (val: unknown): val is symbol => typeof val === "symbol";
@@ -47,10 +49,10 @@ export const isPromise = <T = any>(val: unknown): val is Promise<T> => {
 
 export const isUndefined = (value: unknown): value is undefined => value === undefined;
 export const isNull = (value: unknown): value is null => value === null;
-export const isNullish = (value: unknown): value is null => value == null;
-export const isNotUndefined = (value: unknown): value is unknown => value !== undefined;
-export const isNotNull = (value: unknown): value is unknown => value !== null;
-export const isNotNullish = (value: unknown): value is unknown => value != null;
+export const isNullish = (value: unknown): value is null | undefined => value == null;
+export const isNotUndefined = (value: unknown) => !isUndefined(value);
+export const isNotNull = (value: unknown) => !isNull(value);
+export const isNotNullish = (value: unknown) => !isNullish(value)
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
 export const isSubclassOf = (subclass: Function, superclass: Function) =>

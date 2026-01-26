@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { Fn, Guard } from "../../shared";
+import { Fn, Guard } from "../../../shared";
 
 if (Guard.isUndefined(Promise.wrapAsync)) {
   function __wrapAsync<TArgs extends any[], TRet>(fn: Fn<TArgs, TRet | Promise<TRet>>) {

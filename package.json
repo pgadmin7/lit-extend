@@ -20,6 +20,11 @@
         "./packages/lit-ts:build"
       ]
     },
+    "lit:preview": {
+      "dependencies": [
+        "./packages/lit-ts:preview"
+      ]
+    },
     "vts:dev": {
       "dependencies": [
         "./packages/vanilla-ts:dev"
@@ -43,6 +48,7 @@
     "vts:lint": "eslint packages/vanilla-ts/src --quiet --config packages/vanilla-ts/eslint.config.mjs",
     "lit:dev": "wireit",
     "lit:build": "wireit",
+    "lit:preview": "wireit",
     "lit:lint": "eslint packages/lit-ts/src --quiet --config packages/lit-ts/eslint.config.mjs",
     "coverage": "vitest run --coverage",
     "test": "vitest",
@@ -62,6 +68,11 @@
     "prettier": "^3.7.4",
     "eslint-config-prettier": "^10.1.8",
     "vite": "latest",
+    "@vitejs/plugin-legacy": "^7.2.1",
+    "autoprefixer":"^10.4.23",
+    "core-js": "^3.48.0",
+    "@types/core-js": "^2.5.8",
+    "terser": "^5.46.0",
     "typescript": "^5.9.3",
     "wireit": "^0.14.12",
     "@vitest/browser-playwright": "latest",

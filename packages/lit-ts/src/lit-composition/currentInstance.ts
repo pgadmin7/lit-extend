@@ -1,62 +1,95 @@
-import type { LitElement } from "lit";
+import { LitElement, ReactiveElement } from "lit";
 import { InternalOptionsSymbol } from "./symbols";
-import { Guard, type Fn } from "./../shared";
+import { Func, Guard, type Fn } from "./../shared";
 import { PublicApi } from "./defineComponent/defineComponent";
+import { InternalOptions } from "./defineComponent/hooks";
 
-interface DefinedComponentInstance<Options = Record<string, unknown>> extends LitElement {
-  [InternalOptionsSymbol]: Options;
+interface DefinedComponentInstance<El extends ReactiveElement> extends LitElement {
+  [InternalOptionsSymbol]: InternalOptions<El>;
 }
+export type MaybeDefinedComponentInstance<T> =  
+  T extends ReactiveElement 
+    ? DefinedComponentInstance<T> 
+    : null;
 
-let currentInstance: unknown = null;
+let currentInstance: MaybeDefinedComponentInstance<ReactiveElement | null> = null;
 
-/**
- * Set the current instance of a LitElement, _not_ exported.
- * @param instance the instance to set as current
- */
-const setCurrentInstance = <T extends LitElement>(instance: T) => (currentInstance = instance)
-
-/**
- * Get the current instance of a LitElement.
- * There is only one thread of execution, so there is only one current instance at a time.
- */
-export const getCurrentInstance = <T extends LitElement>() => currentInstance as T & PublicApi;
-
-/**
- * Execute a callback within the given "current instance" scope
- * @param instance the getCurrentInstance() instance to use
- * @param callback the callback to execute with the current instance
- */
-export const withCurrentInstance = <T extends LitElement, Result>(instance: T, callback: Fn<[], Result>): Result => {
-  const old = getCurrentInstance<T>()
-  try {
-    setCurrentInstance(instance)
-    return callback()
-  } finally {
-    setCurrentInstance(old)
+const setCurrentInstance = <T extends ReactiveElement>(value: T) => {
+  const opts = getOptions(value);
+  
+  if(!(isDefinedComponentInstance(value) && Guard.isNotNullish(opts))) {
+    throw new Error("Invalid instance");
   }
-}
 
-export const withCurrentInstanceAsync = async <T extends LitElement, Result>(instance: T, callback: Fn<[], Result>): Promise<Result> => {
-  const old = getCurrentInstance<T>()
+  const prev = currentInstance;
+  currentInstance = value
+  opts.scope.on();
+
+  return (): void => {
+    opts.scope.off();
+    currentInstance = prev;
+  };
+};
+
+export const unsetCurrentInstance = (): void => {
+  getOptions(currentInstance)?.scope.off();
+  currentInstance = null;
+};
+
+export type CurrentInstanceType = DefinedComponentInstance<LitElement> & PublicApi;
+export const getCurrentInstance = (): null | CurrentInstanceType => {
+  if (isDefinedComponentInstance(currentInstance)) {
+    return currentInstance as unknown as CurrentInstanceType;
+  }
+  return null;
+};
+
+export const withCurrentInstance = <T extends ReactiveElement, TRet>(value: T, callback: Fn<[], TRet>): TRet => {
+  let reset: Func | null = null;
   try {
-    setCurrentInstance(instance);
-    if(Guard.isAsyncFunction(callback)){
+    reset = setCurrentInstance(value);
+    return callback();
+  } finally {
+    reset?.();
+  }
+};
+
+export const withCurrentInstanceAsync = async <T extends ReactiveElement, Result>(
+  value: T,
+  callback: Fn<[], Result>
+): Promise<Awaited<Result>> => {
+  let reset: Func | null = null;
+  try {
+    reset = setCurrentInstance(value);
+    if (Guard.isAsyncFunction(callback)) {
       return await callback();
     }
     return Promise.resolve(callback());
   } finally {
-    setCurrentInstance(old)
+    reset?.();
   }
-}
+};
 
-/**
- * Get the options of the current LitElement.
- * These are internal storage for storing hook callbacks.
- */
-export const getCurrentOptions = <
-  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-  Options extends {},
-  Element extends DefinedComponentInstance<Options> = LitElement & { 
-    [InternalOptionsSymbol]: Options;
-  },
->(): Options => getCurrentInstance<Element>()?.[InternalOptionsSymbol]
+export const isReactiveElement = (value: unknown): value is ReactiveElement => {
+  return (
+    typeof value === "object" && 
+    value !== null && 
+    Object.prototype.isPrototypeOf.call(ReactiveElement.prototype, value)
+  );
+};
+
+export const isDefinedComponentInstance = (value: unknown)
+  : value is DefinedComponentInstance<ReactiveElement> => {
+  return (
+    Guard.isNotNullish(value) &&
+    typeof value === "object" &&
+    isReactiveElement(value) &&
+    InternalOptionsSymbol in value
+  );
+};
+
+export const getOptions = (value: unknown) => isDefinedComponentInstance(value) ? value[InternalOptionsSymbol]  : undefined;
+
+export const getCurrentOptions = () => getOptions(getCurrentInstance());
+export const getCurrentScope = () => getCurrentOptions()?.scope;
+export const getCurrentInstanceId = () => getCurrentOptions()?.uid;

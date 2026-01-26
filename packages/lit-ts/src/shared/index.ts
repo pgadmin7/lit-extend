@@ -1,4 +1,5 @@
 import * as Guard from "./is";
+import * as Assert from "./assert";
 import { Func } from "./utils/functions";
 
 const hasOwnProperty = Object.prototype.hasOwnProperty;
@@ -15,10 +16,17 @@ export const def = (obj: object, key: string | symbol, value: any, writable = fa
 };
 
 export * from "./utils";
-export { Guard };
+export { Guard, Assert };
 
 export const stubFn: Func = <TRet>() => void 0 as unknown as TRet;
 
 export function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
+
+export const wrapArray = <T>(val?: T | T[] | undefined | null): T[] => {
+  if (Guard.isNullish(val)) return [] as T[];
+  if (!Guard.isArray(val)) return [val] as T[];
+  return val;
+};
+import "./core";

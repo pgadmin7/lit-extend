@@ -1,4 +1,4 @@
-import { Guard } from "../../shared";
+import { Guard } from "../../../shared";
 
 if (Guard.isUndefined(Array.prototype.firstOrDefault)) {
   Object.defineProperty(Array.prototype, "firstOrDefault", {

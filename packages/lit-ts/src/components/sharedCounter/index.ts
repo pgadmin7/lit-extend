@@ -1,12 +1,5 @@
-import { useMouseV2 } from "../../composable/useMouseV2";
-
-import {
-  html,
-  defineComponent,
-  ref,
-  computed
-} from "../../lit-composition";
-
+import { html, defineComponent, ref, computed, renderEffect } from "../../lit-composition";
+import { useMouse } from "../../composable/useMouse";
 
 export const MyHello = defineComponent({
   name: "my-hello",
@@ -17,7 +10,7 @@ export const MyHello = defineComponent({
   setup() {
     const count = ref(0);
     const deepCount = ref({ someProp: 0 });
-    const { coordinate } = useMouseV2.call(this);
+    const { coordinate } = useMouse();
     const onClick = () => {
       count.value += 1;
       deepCount.value = { someProp: count.value };
@@ -27,18 +20,18 @@ export const MyHello = defineComponent({
       return `The current button count is ${count.value}`;
     });
 
-    return () => {
-      return html`
-        <div>
-          <p>Mouse Point</p>
-          <p>x: ${coordinate.x}</p>
-          <p>y: ${coordinate.y}</p>
-          <p>deepCount: ${deepCount.value.someProp}</p>
-          <p>${computedLabel}</p>
-          <button @click=${onClick}>Count</button>
-        </div>
-      `;
-    };
+    return () => html`
+      <div>
+        <p>Mouse Point</p>
+        ${renderEffect(() => html`<p>x: ${coordinate.x}</p>`)}
+        <p>y: ${renderEffect(() => coordinate.y)}</p>
+        <p>deepCount: ${renderEffect(() => deepCount.value.someProp)}</p>
+        <p>RenderEffect + ComputedRef ${renderEffect(() => computedLabel.value)}</p>
+        <p>ComputedEffect: ${computedLabel.value}</p>
+        <p>RenderEffect: ${`Count ${count.value}`}</p>
+        <button @click=${onClick}>Count</button>
+      </div>
+    `;
   }
 });
 

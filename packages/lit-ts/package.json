@@ -7,10 +7,13 @@
   "wireit": {
     "dev": {
       "command": "vite dev --force",
-      "service": true
+      "service": true,
+      "env": {
+        "NODE_ENV": "development"
+      }
     },
     "build": {
-      "command": "vite build --force",
+      "command": "vite build",
       "clean": true,
       "files": [
         "src/**/*.ts",
@@ -21,6 +24,10 @@
         "dist",
         ".tsbuildinfo"
       ]
+    },
+    "preview": {
+      "command": "vite preview",
+      "service": true
     }
   },
   "dependencies": {
@@ -30,7 +37,12 @@
   },
   "devDependencies": {
     "typescript": "~5.9.3",
-    "vite": "^7.3.0"
+    "vite": "^7.3.0",
+    "@vitejs/plugin-legacy": "^7.2.1",
+    "autoprefixer": "^10.4.23",
+    "core-js":"^3.48.0",
+    "@types/core-js":"^2.5.8",
+    "terser":"^5.46.0"
   },
   "peerDependencies": {}
 }
